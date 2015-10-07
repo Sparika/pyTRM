@@ -1,0 +1,52 @@
+/** Simple Reliability Recommender System (RS)
+No weight
+**/
+
+trustmodel
+
+A :
+	// Relations are private, ie not accessible on path search as is
+	// Opinion is the type/concern of the relation
+	// @Reputation is the trustworthiness of a reputation recommandation
+	-> private B: Opinion = AB
+	-> private D: Opinion = AD
+	-> private RS: @Reputation = True//1
+B :
+	-> private A: Opinion = BA
+	-> private C: Opinion = BC
+	-> private RS: @Reputation = True//1
+C :
+	-> private B: Opinion = CB
+	-> private D: Opinion = CD
+	-> private RS: @Reputation = True//1
+D :
+	-> private C: Opinion = DC
+	-> private RS: @Reputation = True//1
+
+RS :
+	-> private A : @Opinion = RSA
+	-> private B : @Opinion = RSB
+	-> private C : @Opinion = RSC
+	-> private D : @Opinion = RSD
+
+	// Functions can be used to aggregate trust in formulas
+	// Here we do an average on reliability for each available neigbor
+	// Automated path search and average opperator would be better
+	//def reputation( n1:Node ): Reputation = {
+	//	var t = 0
+	//	for(n2 <- this.neighbor){
+	//		t += Tr(this->n1, Opinion)*Tr(n1->n2, Opinion)
+	//	}
+	//	t = t/this.neighbor_number
+	//	
+	//	return t
+	//}
+	// Alternative (with pre-defined operators)
+	// Trust of type Reputation in N1 is the average of Opinion paths leading to N1
+	// To work, opinions would need to be public
+	//def -> N1 : Reputation = Avrg//(Opinion(_ -> N1))
+	
+
+
+// Example functionnal request
+// Reliability(N1, N2) = Reputation(N1->_->N2) (+) Opinion(N1->N2)

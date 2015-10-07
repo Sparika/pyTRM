@@ -1,0 +1,68 @@
+@startuml
+
+note as N0
+Identity(A->_->B)? 
+	:= (Security(A->IdP) * @Identity(A->IdP)) * 
+		(Security(IdP->B) * Identity(IdP->B))
+	:= (TLS * 1) * (TLS * Auth)
+
+With TLS=1 (secure):
+	Identity(A->_->B) := Auth
+
+No weight. Hypothesis that TLS is secure
+and that Alice trust IdP for Identity
+recommandation.
+end note
+
+class Relation {
+	+ Scope: visibility
+	+ Expr: value
+}
+
+class Agent {
+	+ severityWeightFunction()
+	+ interestWeightFunction()
+}
+
+note "node A, B, IdP" as N1
+N1 .. Agent
+
+
+note as N2 
+A : {
+	-> private IdP: @Identity = 1
+	-> private Idp: Securityi = TLS
+}
+IdP : {
+	-> B: Identity = Auth
+	-> B: Security = TLS
+}
+end note
+
+N2 .. Relation
+ 
+
+Agent -> "0..*" Agent
+(Agent, Agent) .. Relation
+
+Relation --> Type
+Type - Type : Depends
+note right on link
+dependency
+	Identity -> Security
+end note
+Type <|-- RType
+note on link
+@Identity relations can carry
+trust from an Identity relation
+TrustChain := (RecommenderTrust)* FunctionnalTrust
+end note
+
+note left of Type : Identity\nSecurity
+note left of RType : @Identity
+
+Relation -- Tag
+
+
+
+@enduml

@@ -1,0 +1,36 @@
+/** Simple WebRTC Trust model
+No weight
+**/
+
+trustmodel
+
+
+//Express dependencies between trust types
+dependency
+	// Identity needs Security
+	Identity -> Security
+
+A :
+	// #Signal tags this relation as part of the signal path
+	-> private CSP: Security #Signal = TLS
+	-> private CSP: Trustworthiness #Signal = ACSP
+	-> private IdP: Security = TLS
+	// @Identity refer to trust in an identity recommendation from IdP
+	-> private IdP: @Identity = 1
+	
+	// Reference to the #Signal path means that we should compute trustworthiness over this path
+	// as the #Signal value. (What if there is branches on the path?)
+	-> private B: Security #Call = SIP //(SIP ? 1 : #Signal) (*) DTLSSRTP
+	// Keying depends on protocol. If it does not depends on sigpath security then it is always 1
+	// else it depends on #Signal
+CSP :
+	-> B: Security #Signal = BA 
+IdP :
+	-> B: Security = TLS
+	-> B: Identity = AuthB
+
+
+// Model request
+// Something like that would express that the trust of A in the conversation (AConv)
+// would be equal to trust in the call security and A trust in B's Identity. 
+// AConv(A, B) = #Call/Security(A->B) (+) Identity(A->_->B)
